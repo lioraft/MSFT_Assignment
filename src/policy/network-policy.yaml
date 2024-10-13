@@ -6,11 +6,11 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: service-a
+      app: service-b
   policyTypes:
-    - Egress
-  egress:
-    - to:
-        - podSelector:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
             matchLabels:
-              app: service-b
+              name: ingress-nginx # allow traffic only from ingress controller, so no traffic from service a

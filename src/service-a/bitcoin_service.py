@@ -11,32 +11,38 @@ def fetch_bitcoin_price():
         bitcoin_value = response.json()['bpi']['USD']['rate_float']
         return bitcoin_value
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching bitcoin price: {e}")
         return None
 
-# function that calculates the avg of last 10 minutes and prints it.
-def ten_min_avg():
+# function that calculates the avg of prices and prints it.
+def prices_avg():
     global PRICES
+    # if no prices in array, return none
+    if len(PRICES) == 0:
+        return None
     # every 10 minutes, print the average value of the last 10 minutes
-    if len(PRICES) == 10:
-        avg = sum(PRICES) / 10
-        # reset array of 10 last values
-        PRICES = []
-        print(f"Average bitcoin value of last 10 minutes: {avg}")
+    avg = sum(PRICES) / len(PRICES)
+    # reset array of 10 last values and return value
+    PRICES = []
+    return avg
 
 # function that prints the required data (value every minute, and avg every 10 minutes)
 def print_data():
+    # if fetched current value, print it
     bitcoin_value = fetch_bitcoin_price()
     if bitcoin_value is not None:
         print(f"Current bitcoin value: {bitcoin_value}")
         PRICES.append(bitcoin_value)
-    else:
-        print("Bitcoin value not fetched due to internal error")
+    # if 10 minutes passed, print average
+    if len(PRICES) == 10:
+        cur_avg = prices_avg()
+        print(f"Average bitcoin value of last 10 minutes: {cur_avg}")
 
 
 while True:
     try:
-        print_data() # print current data
-        time.sleep(60)  # fetch every 1 minute
+        # fetch every 1 minute and print current data
+        print_data()
+        time.sleep(60) 
     except Exception as e:
-        print(f"An error occurred: {e}") # catch exceptions to avoid sudden crashing
+        # catch exceptions to avoid sudden crashing
+        print(f"An error occurred: {e}")
