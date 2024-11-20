@@ -1,19 +1,5 @@
-# login to azure
-az login --use-device-code
-# set subscription of assignment
-az account set --subscription b7d6f930-14a3-47ba-9cbc-c8ca1bf77ce0
-# create resource group and cluster
-az group create --location centralus --name aks-rg
-az aks create --resource-group aks-rg --name aks-ms --node-count 2 --generate-ssh-keys
-#enable aad in order to enable rbac
-az aks update --resource-group aks-rg --name aks-ms --enable-aad
-az aks update --resource-group aks-rg --name aks-ms --enable-azure-rbac
-# validate rbac was enabled
-az aks show --resource-group aks-rg --name aks-ms --query "enableRbac"
-# get credentials for kubectl
-az aks get-credentials --resource-group aks-rg --name aks-ms
-# use cluster context
-kubectl config use-context aks-ms
+# start minikube with rbac enabled
+minikube start --extra-config=apiserver.authorization-mode=RBAC
 # apply ingress controller 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
 # verify it's running and check IP
